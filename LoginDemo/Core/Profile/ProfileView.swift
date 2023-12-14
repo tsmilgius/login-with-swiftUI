@@ -8,50 +8,55 @@
 import SwiftUI
 
 struct ProfileView: View {
+    @EnvironmentObject var viewModel: AuthViewModel
     var body: some View {
-        List{
-            Section{
-                HStack {
-                    Text("TS")
-                        .font(.title)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
-                        .frame(width: 72, height: 72)
-                        .background(Color(.systemGray4))
-                        .clipShape(/*@START_MENU_TOKEN@*/Circle()/*@END_MENU_TOKEN@*/)
-                        
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Tomas Smilgius")
-                            .font(.subheadline)
+        if let user = viewModel.currentUser {
+            List{
+                Section{
+                    HStack {
+                        Text(user.initials)
+                            .font(.title)
                             .fontWeight(.semibold)
-                            .padding(.top, 4)
-                        Text("tsmilgius@gmail.com")
-                            .font(.footnote)
-                            .accentColor(.gray)
+                            .foregroundColor(.white)
+                            .frame(width: 72, height: 72)
+                            .background(Color(.systemGray4))
+                            .clipShape(/*@START_MENU_TOKEN@*/Circle()/*@END_MENU_TOKEN@*/)
+                            
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(user.fullName)
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .padding(.top, 4)
+                            Text(user.email)
+                                .font(.footnote)
+                                .foregroundColor(.gray)
+                        }
+                    }
+                    
+                }
+                Section("General"){
+                    HStack {
+                        SettingRowView(imageName: "gear", title: "Version", tintColor: Color(.systemGray))
+                        Spacer()
+                        Text("1.0.0")
+                            .font(.subheadline)
+                            .foregroundColor(Color(.systemGray))
                     }
                 }
-                
-            }
-            Section("General"){
-                HStack {
-                    SettingRowView(imageName: "gear", title: "Version", tintColor: Color(.systemGray))
-                    Spacer()
-                    Text("1.0.0")
-                        .font(.subheadline)
-                        .foregroundColor(Color(.systemGray))
-                }
-            }
-            Section("Account"){
-                Button {
-                    print("Signing out")
-                } label:{
-                    SettingRowView(imageName: "arrow.left.circle.fill", title: "Sign Out", tintColor: Color(.red))
-                }
-                    
-                Button {
-                    print("Deleting account")
-                } label:{
-                    SettingRowView(imageName: "xmark.circle.fill", title: "Delete Account", tintColor: Color(.red))
+                Section("Account"){
+                    Button {
+                        Task{
+                            viewModel.signOut()
+                        }
+                    } label:{
+                        SettingRowView(imageName: "arrow.left.circle.fill", title: "Sign Out", tintColor: Color(.red))
+                    }
+                        
+                    Button {
+                        print("Deleting account")
+                    } label:{
+                        SettingRowView(imageName: "xmark.circle.fill", title: "Delete Account", tintColor: Color(.red))
+                    }
                 }
             }
         }
